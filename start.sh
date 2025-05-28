@@ -43,20 +43,16 @@ start_ollama() {
     done
     echo "✅ Ollama server is running!"
     
-    # Load the model
-    echo "🚀 Loading QwQ-32B model (this may take a while on first run)..."
-    nohup ollama run hf.co/unsloth/QwQ-32B-GGUF:Q4_K_M > /qwq.log 2>&1 &
-    
-    # Wait a bit and verify model loading
-    sleep 5
-    echo "📋 Available models:"
-    ollama list || echo "   Model still loading..."
+    # Make a dummy API call to load the model
+    echo "Warming up QwQ-32B model..."
+    curl -s -X POST http://localhost:11434/api/generate \
+        -d '{"model": "hf.co/unsloth/QwQ-32B-GGUF:Q4_K_M", "prompt": "Hello", "stream": false}' > /dev/null
     
     echo ""
     echo "🎉 Ollama setup complete!"
     echo "   • Local API: http://localhost:11434"
     echo "   • External API: https://[your-pod-id]-11434.proxy.runpod.net"
-    echo "   • Logs: /ollama.log and /qwq.log"
+    echo "   • Logs: /ollama.log"
 }
 
 # Execute script if exists
